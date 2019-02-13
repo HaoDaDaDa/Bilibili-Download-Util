@@ -40,7 +40,7 @@ public class BilibiliVideoDownloadUtil {
             pNum = pNumTemp;
         }
 
-        System.out.println("开始下载");
+
 
         BilibiliVideoDownloadUtil bilibiliVideoDownloadUtil = new BilibiliVideoDownloadUtil();
 
@@ -85,17 +85,34 @@ public class BilibiliVideoDownloadUtil {
         httpURLConnection.setRequestProperty("Connection","keep-alive");
         httpURLConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_1) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.0.1 Safari/605.1.15");
 
+        System.out.println("开始下载");
+
+        int contentLength = httpURLConnection.getContentLength();
+
+        System.out.println("文件总大小为:" + contentLength/1024/1024 + "MB");
+
+        System.out.println();
+
         try (BufferedInputStream bufferedInputStream = new BufferedInputStream(httpURLConnection.getInputStream()); BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(fileUrl+title+".flv"))) {
             byte[] b = new byte[1024];
             int n;
-            long flag = 0L;
+            int tempLength = 0;
 
+            System.err.println("----------\n 正在下载\n----------");
+
+            int flag = 1;
+            StringBuilder stringBuilder = new StringBuilder();
             while ((n = bufferedInputStream.read(b)) != -1) {
                 bufferedOutputStream.write(b, 0, n);
-                flag++;
-                // 进度条不准
-                if (flag % 1024 == 0){
-                    System.out.println("已经下载了" + flag/1024 + "MB");
+                tempLength += n;
+
+                if (tempLength > contentLength/100 * flag){
+                    System.out.print("\r");
+                    if(flag == 1) {
+                        stringBuilder.append(">");
+                    }
+                    System.out.print(stringBuilder.toString()+"\t"+ flag +"%");
+                    flag = flag + 1;
                 }
             }
 
