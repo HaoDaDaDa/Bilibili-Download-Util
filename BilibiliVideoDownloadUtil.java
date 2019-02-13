@@ -35,8 +35,9 @@ public class BilibiliVideoDownloadUtil {
         avNum = scanner.nextLine();
 
         System.out.println("请输入要下载的p号，不输入则默认为p1");
-        if(!"".equals(scanner.nextLine()) && scanner.nextLine() != null){
-            pNum = scanner.nextLine();
+        String pNumTemp = scanner.nextLine();
+        if(!"".equals(pNumTemp) && pNumTemp != null){
+            pNum = pNumTemp;
         }
 
         System.out.println("开始下载");
@@ -160,7 +161,8 @@ public class BilibiliVideoDownloadUtil {
      */
     private String reGexMatch(String context){
 
-        String reGex = "url\":\"http://upos-hz.+\",\"back";
+//        String reGex = "url\":\"http://upos-hz.+\",\"back";
+        String reGex = "url\":\"http://upos-hz[^\"]+";
 
         Pattern pattern = Pattern.compile(reGex);
 
@@ -172,7 +174,7 @@ public class BilibiliVideoDownloadUtil {
             result  = matcher.group();
         }
 
-        return result.substring(6, result.length() - 7);
+        return result.substring(6, result.length());
     }
 
 
@@ -210,6 +212,8 @@ public class BilibiliVideoDownloadUtil {
         }
 
         try (FileInputStream in = new FileInputStream(thisDir + prefix + "config.properties")) {
+        // 如果直接运行 的话 你也可以在这里直接设置 config 文件的地址
+//        try (FileInputStream in = new FileInputStream("/Users/abel/Github/Java代码练习/javaSE/src/main/java/socket/bilibili/config.properties")) {
             Properties prop = new Properties();
             try {
                 prop.load(in);
